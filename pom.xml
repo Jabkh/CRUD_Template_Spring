@@ -28,6 +28,10 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <!-- Propriétés de configuration SonarQube -->
+        <sonar.projectKey>your_project_key_here</sonar.projectKey>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.login>your_sonar_token_here</sonar.login>
     </properties>
     <dependencies>
         <dependency>
@@ -90,6 +94,7 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -101,6 +106,11 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.1.2184</version>
             </plugin>
         </plugins>
     </build>
