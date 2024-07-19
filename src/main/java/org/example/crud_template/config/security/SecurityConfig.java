@@ -1,6 +1,8 @@
 package org.example.crud_template.config.security;
 
 import org.example.crud_template.config.jwt.JwtRequestFilter;
+import org.example.crud_template.filter.EmailVerificationFilter;
+import org.example.crud_template.filter.PerformanceLoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -41,6 +43,17 @@ public class SecurityConfig {
         return new JwtRequestFilter();
     }
 
+    @Bean
+    public EmailVerificationFilter emailVerificationFilter(){
+        return new EmailVerificationFilter();
+    }
+
+    @Bean
+    public PerformanceLoggingFilter performanceLoggingFilter(){
+        return new PerformanceLoggingFilter();
+    }
+
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,20 +62,21 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-//                                .requestMatchers("/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("USER","ADMIN")
-                                .requestMatchers("/api/employees/**").hasRole("ADMIN")
-                                .requestMatchers("*").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/api/employees/**").hasRole("ADMIN")
+                        .requestMatchers("*").authenticated()
                 )
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(emailVerificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(performanceLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Collections.singletonList("http://localhost:5174"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5174", "http://192.168.1.191:5174"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
