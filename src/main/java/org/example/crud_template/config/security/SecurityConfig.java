@@ -67,9 +67,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/employees/**").hasRole("ADMIN")
                         .requestMatchers("*").authenticated()
                 )
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(emailVerificationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(performanceLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+                // .addFilterBefore(emailVerificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                // .addFilterBefore(performanceLoggingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
